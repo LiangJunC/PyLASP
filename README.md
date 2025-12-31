@@ -44,16 +44,11 @@
 
 <h2 id="overview">🔭 Overview</h2>
 
-**PyLASP** (The Python Version of the LAMOST Stellar Parameter Pipeline) is a modern, 
-modular reimplementation of the original LASP (**LASP-MPFit**), which was developed in Interactive Data
-Language (IDL) and employed the [`ULySS`](http://ulyss.univ-lyon1.fr/) software package to
-infer radial velocity, effective temperature, surface gravity, and metallicity from observed spectra. 
+**PyLASP** (The Python Version of the LAMOST Stellar Parameter Pipeline) is a modern, modular reimplementation of the original LASP (**LASP-MPFit**), which was developed in Interactive Data Language (IDL) and employed the [`ULySS`](http://ulyss.univ-lyon1.fr/) software package to infer radial velocity, effective temperature, surface gravity, and metallicity from observed spectra. 
 
 **PyLASP** refactors the **LASP-MPFit** with two complementary modules:
 - **LASP-CurveFit** — a new implementation of the **LASP-MPFit** fitting procedure that runs on CPU, preserving legacy logic while improving data I/O and multithreaded execution efficiency.
-- **LASP-Adam-GPU** — a GPU
-accelerated method that introduces grouped optimization by constructing a joint residual function over multiple
- observed and model spectra, enabling high-throughput parameter inference across tens of millions of spectra.
+- **LASP-Adam-GPU** — a GPU accelerated method that introduces grouped optimization by constructing a joint residual function over multiple observed and model spectra, enabling high-throughput parameter inference across tens of millions of spectra.
 
 **PyLASP** provides both **No Clean** and **Clean** strategies:
 - **No Clean strategy** — a computationally efficient strategy that fits spectra without iterative pixel rejection. It is faster but may yield lower accuracy for spectra containing significant artifacts.
@@ -87,9 +82,7 @@ cd /path/to/PyLASP
 pip install -e .
 ```
 
-⚠️ **Note:** The above steps install only the dependencies for **LASP-CurveFit**. To enable **LASP-Adam-GPU**, install the 
-appropriate PyTorch version in the same environment. See 
-the [`official PyTorch installation guide`](https://pytorch.org/get-started/locally/) for details.
+⚠️ **Note:** The above steps install only the dependencies for **LASP-CurveFit**. To enable **LASP-Adam-GPU**, install the appropriate PyTorch version in the same environment. See the [`official PyTorch installation guide`](https://pytorch.org/get-started/locally/) for details.
 
 ---
 
@@ -134,7 +127,7 @@ LASP-CurveFit/
 │   └── mregress.py                       # Legendre polynomial coefficient calculation
 │
 ├── clean_outliers/                       # Outlier rejection
-│   └── mregress.py                       # Clean strategy
+│   └── clean.py                          # Clean strategy
 │ 
 └── uly_fit/                              # Parameter fitting core
     ├── robust_sigma.py                   # Robust standard deviation calculation
@@ -227,8 +220,7 @@ and finally saves the inferred results as CSV file.
 - Correct the shape of N model spectra to match the observed spectra: [`mregress_pytorch.py`](legendre_polynomial/mregress_pytorch.py)
 - Apply the Clean strategy (optional): [`clean_pytorch.py`](clean_outliers/clean_pytorch.py)
 
-**Step 3:** Once the objective function converges, [`uly_fit_conv_poly_pytorch.py`](uly_fit/uly_fit_conv_poly_pytorch.py) calls [`model_err.py`](model_err/model_err.py) to compute the parameter errors of N spectra and  
-saves the final results as a CSV file.
+**Step 3:** Once the objective function converges, [`uly_fit_conv_poly_pytorch.py`](uly_fit/uly_fit_conv_poly_pytorch.py) calls [`model_err.py`](model_err/model_err.py) to compute the parameter errors of N spectra and saves the final results as a CSV file.
 
 ---
 
@@ -238,7 +230,7 @@ saves the final results as a CSV file.
 
 - **LASP-CurveFit** is used to infer stellar parameters: see `case 2` in [`tutorial.ipynb`](tutorial.ipynb)
 - Individual spectrum parameter inference using `curve_fit`
-- Uses `joblib` to provide multiprocessing support for large spectroscopic datasets.
+- Uses `joblib` to provide multiprocessing support for large spectroscopic datasets
 - Preserves original IDL logic
 
 <h3 id="lasp-adam-gpu-inference-example">LASP-Adam-GPU Inference Example</h3>
@@ -258,7 +250,7 @@ saves the final results as a CSV file.
 | Wavelength Coverage       | Single continuous range (e.g., 4200-5700 Å)                          | Add support for disjoint wavelength segments (e.g., 4200-4500 Å and 5200-5700 Å) | Apply wavelength mask array; set mask=0 for excluded regions (e.g., 4500-5200 Å)  |
 | Two-Stage Fitting         | First-stage implemented                                              | Full two-stage pipeline integration                              | Remove pseudo-continuum from observed spectra manually, then run PyLASP inference |
 | Multi-Abundance Inference | Only RV, $T_{\rm eff}$, log $g$, [Fe/H]                              | Joint inference of multiple elemental abundances                 | Multi-objective optimization with extended spectral model                         |
-| Legendre Polynomial       | Multiplicative correction supported; additive mode not yet successful | Enable both multiplicative and additive polynomial corrections | Iterative testing and implementation refinement                                     |
+| Legendre Polynomial       | Multiplicative correction supported; additive mode not yet successful| Enable both multiplicative and additive polynomial corrections | Iterative testing and implementation refinement                                     |
 | Wavelength Sampling       | Tested with log-uniform grids (ln λ)                                 | Support for linear-uniform and non-uniform wavelength grids    | Progressive testing across different sampling schemes                               |
 
 ---
